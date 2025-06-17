@@ -57,6 +57,24 @@ usersRoutes.post("/create-user", async (req: Request, res: Response) => {
 usersRoutes.get("/", async (req: Request, res: Response) => {
   const users = await Users.find();
 
+  //filtering
+  // const userEmail = req.query.email;
+  // const users = await Users.find({ email: userEmail });
+
+  // sorting
+  // const users = await Users.find({}).sort({ email: 1 });
+  // const users = await Users.find({}).sort({ email: -1 });
+  // const users = await Users.find({}).sort({ firstName: "asc" });
+  // const users = await Users.find({}).sort({ email: "ascending" });
+  // const users = await Users.find({}).sort({ email: "desc" });
+  // const users = await Users.find({}).sort({ fullName: "descending" });
+
+  // skip
+  // const users = await Users.find().skip(10);
+
+  // limit
+  // const users = await Users.find().limit(3);
+
   res.status(200).json({
     success: true,
     message: "All users show successfully",
