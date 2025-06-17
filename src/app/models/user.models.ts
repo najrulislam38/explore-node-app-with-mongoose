@@ -82,6 +82,8 @@ const userSchema = new mongoose.Schema<
   {
     versionKey: false,
     timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
   }
 );
 
@@ -127,6 +129,11 @@ userSchema.post("findOneAndDelete", async function (doc, next) {
 
   next();
 });
+
+userSchema.virtual("fullName").get(function () {
+  return `${this.firstName} ${this.lastName}`;
+});
+
 const Users = mongoose.model<User, UserStaticMethods>("Users", userSchema);
 
 export default Users;
