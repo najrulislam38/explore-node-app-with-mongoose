@@ -23,12 +23,19 @@ usersRoutes.post("/create-user", async (req: Request, res: Response) => {
 
     // body.password = password;
 
-    const newUser = new Users(body);
-    const password = await newUser.hashPassword(body.password);
+    // instance method
+    // const newUser = new Users(body);
+    // const password = await newUser.hashPassword(body.password);
 
-    newUser.password = password;
+    // newUser.password = password;
 
-    await newUser.save();
+    // await newUser.save();
+
+    // static method
+    // const password = await Users.hashPassword(body.password);
+    // body.password = password;
+
+    const newUser = await Users.create(body);
 
     if (!newUser) {
       throw new Error("User provided data not valid.");

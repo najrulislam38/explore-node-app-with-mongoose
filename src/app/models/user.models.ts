@@ -5,6 +5,7 @@ import {
   IAddress,
   User,
   UserInstanceMethods,
+  UserStaticMethods,
 } from "../interfaces/users.interface";
 import validator from "validator";
 
@@ -19,7 +20,11 @@ const userAddressSchema = new mongoose.Schema<IAddress>(
   }
 );
 
-const userSchema = new mongoose.Schema<User, Model<User>, UserInstanceMethods>(
+const userSchema = new mongoose.Schema<
+  User,
+  UserStaticMethods,
+  UserInstanceMethods
+>(
   {
     firstName: {
       type: String,
@@ -62,7 +67,6 @@ const userSchema = new mongoose.Schema<User, Model<User>, UserInstanceMethods>(
       type: String,
       required: true,
       trim: true,
-      unique: true,
     },
     role: {
       type: String,
@@ -80,11 +84,31 @@ const userSchema = new mongoose.Schema<User, Model<User>, UserInstanceMethods>(
   }
 );
 
+// instance methods
 userSchema.method("hashPassword", async function (pass: string) {
   const password = await bcrypt.hash(pass, 10);
   return password;
 });
 
-const Users = mongoose.model<User>("Users", userSchema);
+// static methods
+userSchema.static("hashPassword", async function (pass: string) {
+  const password = await bcrypt.hash(pass, 10);
+  return password;
+});
+
+// pre save hook / middleware
+userSchema.pre("save", async function (next) {
+  this.password = await bcrypt.hash(this.password, 10);
+  // console.log(this);
+  next();
+});
+
+// post save hook / middleware
+userSchema.post("save", async function (doc, next) {
+  console.log(`user ${doc.email} inserted successfully`);
+  next();
+});
+
+const Users = mongoose.model<User, UserStaticMethods>("Users", userSchema);
 
 export default Users;
