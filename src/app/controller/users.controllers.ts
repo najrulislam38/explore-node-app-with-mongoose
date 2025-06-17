@@ -1,11 +1,22 @@
 import express, { Request, Response } from "express";
 import Users from "../models/user.models";
+import { z } from "zod";
 
 export const usersRoutes = express.Router();
 
+const createValidationWithZod = z.object({
+  firstName: z.string(),
+  lastName: z.string(),
+  email: z.string(),
+  phone: z.string(),
+  age: z.number(),
+  role: z.string().optional(),
+});
+
 usersRoutes.post("/create-user", async (req: Request, res: Response) => {
   try {
-    const body = req.body;
+    const body = await createValidationWithZod.parseAsync(req.body);
+
     const newUser = await Users.create(body);
 
     if (!newUser) {
@@ -16,8 +27,12 @@ usersRoutes.post("/create-user", async (req: Request, res: Response) => {
       message: "User created successfully",
       user: newUser,
     });
-  } catch (error) {
-    res.send(error);
+  } catch (error: any) {
+    res.status(400).json({
+      success: false,
+      message: error.message,
+      error,
+    });
   }
 });
 
