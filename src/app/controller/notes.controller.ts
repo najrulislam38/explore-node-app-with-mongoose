@@ -4,7 +4,7 @@ import Note from "../models/notes.model";
 export const notesRoutes = express.Router();
 
 notesRoutes.get("/", async (req: Request, res: Response) => {
-  const notes = await Note.find();
+  const notes = await Note.find().populate("user");
 
   res.status(200).json({
     success: true,
@@ -14,18 +14,31 @@ notesRoutes.get("/", async (req: Request, res: Response) => {
 });
 
 notesRoutes.get("/:noteId", async (req: Request, res: Response) => {
-  // get single data using Id
-  const noteId = req.params.noteId;
-  const note = await Note.findById(noteId);
+  try {
+    const noteId = req.params.noteId;
+    const note = await Note.findById(noteId).populate("user");
 
-  // get single data using any field.
-  const singleNote = await Note.findOne({ title: "Learning Mongoose" });
+    res.status(200).json({
+      success: true,
+      message: "note show successfully",
+      note,
+    });
 
-  res.status(200).json({
-    success: true,
-    message: "note show successfully",
-    note: singleNote,
-  });
+    // get single data using any field.
+    // const singleNote = await Note.findOne({ title: "Learning Mongoose" });
+
+    // res.status(200).json({
+    //   success: true,
+    //   message: "note show successfully",
+    //   note: singleNote,
+    // });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Internal server error",
+      error,
+    });
+  }
 });
 
 notesRoutes.post("/create-note", async (req: Request, res: Response) => {

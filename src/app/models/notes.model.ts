@@ -1,4 +1,4 @@
-import mongoose, { model } from "mongoose";
+import mongoose, { model, Schema } from "mongoose";
 import { NotesInterface } from "../interfaces/notes.interfaces";
 
 const noteSchema = new mongoose.Schema<NotesInterface>(
@@ -18,6 +18,11 @@ const noteSchema = new mongoose.Schema<NotesInterface>(
       label: { type: String, required: true },
       color: { type: String, default: "gray" },
     },
+    user: {
+      type: Schema.Types.ObjectId,
+      ref: "Users",
+      required: true,
+    }, // Reference to the user who created the note
   },
   {
     versionKey: false,

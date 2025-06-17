@@ -1,6 +1,17 @@
-import mongoose from "mongoose";
-import { User } from "../interfaces/users.interface";
+import mongoose, { model } from "mongoose";
+import { IAddress, User } from "../interfaces/users.interface";
 import validator from "validator";
+
+const userAddressSchema = new mongoose.Schema<IAddress>(
+  {
+    city: String,
+    street: String,
+    zipcode: Number,
+  },
+  {
+    _id: false,
+  }
+);
 
 const userSchema = new mongoose.Schema<User>(
   {
@@ -46,6 +57,7 @@ const userSchema = new mongoose.Schema<User>(
       },
       default: "superuser",
     },
+    address: userAddressSchema,
   },
   {
     versionKey: false,
@@ -53,6 +65,6 @@ const userSchema = new mongoose.Schema<User>(
   }
 );
 
-const Users = mongoose.model<User>("Users", userSchema);
+const Users = model<User>("Users", userSchema);
 
 export default Users;

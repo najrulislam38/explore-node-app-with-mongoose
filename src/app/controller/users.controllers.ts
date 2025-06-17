@@ -4,18 +4,19 @@ import { z } from "zod";
 
 export const usersRoutes = express.Router();
 
-const createValidationWithZod = z.object({
-  firstName: z.string(),
-  lastName: z.string(),
-  email: z.string(),
-  phone: z.string(),
-  age: z.number(),
-  role: z.string().optional(),
-});
+// const createValidationWithZod = z.object({
+//   firstName: z.string(),
+//   lastName: z.string(),
+//   email: z.string(),
+//   phone: z.string(),
+//   age: z.number(),
+//   role: z.string().optional(),
+// });
 
 usersRoutes.post("/create-user", async (req: Request, res: Response) => {
   try {
-    const body = await createValidationWithZod.parseAsync(req.body);
+    // const zodBody = await createValidationWithZod.parseAsync(req.body);
+    const body = req.body;
 
     const newUser = await Users.create(body);
 
@@ -36,7 +37,7 @@ usersRoutes.post("/create-user", async (req: Request, res: Response) => {
   }
 });
 
-usersRoutes.get("", async (req: Request, res: Response) => {
+usersRoutes.get("/", async (req: Request, res: Response) => {
   const users = await Users.find();
 
   res.status(200).json({

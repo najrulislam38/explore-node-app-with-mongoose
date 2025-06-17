@@ -1,3 +1,5 @@
+import { Types } from "mongoose";
+
 export interface NotesInterface {
   title: string;
   content: string;
@@ -7,4 +9,5 @@ export interface NotesInterface {
     label: string;
     color: string;
   };
+  user: Types.ObjectId | string;
 }
