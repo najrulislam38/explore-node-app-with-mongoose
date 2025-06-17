@@ -102,7 +102,9 @@ usersRoutes.delete(
   async (req: Request, res: Response) => {
     const userId = req.params.userId;
 
-    const deletedUser = await Users.findByIdAndDelete(userId);
+    // const deletedUser = await Users.findByIdAndDelete(userId);
+    const deletedUser = await Users.findOneAndDelete({ _id: userId });
+
     res.status(200).json({
       success: true,
       message: "User deleted successfully",

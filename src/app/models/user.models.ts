@@ -8,6 +8,7 @@ import {
   UserStaticMethods,
 } from "../interfaces/users.interface";
 import validator from "validator";
+import Note from "./notes.model";
 
 const userAddressSchema = new mongoose.Schema<IAddress>(
   {
@@ -97,18 +98,35 @@ userSchema.static("hashPassword", async function (pass: string) {
 });
 
 // pre save hook / middleware
+
+// document middleware
 userSchema.pre("save", async function (next) {
   this.password = await bcrypt.hash(this.password, 10);
   // console.log(this);
   next();
 });
 
-// post save hook / middleware
+// query middleware
+userSchema.pre("find", async function (next) {
+  console.log("Inside the find hooks");
+  next();
+});
+
+// post save hook / document middleware
 userSchema.post("save", async function (doc, next) {
   console.log(`user ${doc.email} inserted successfully`);
   next();
 });
 
+// post hook / query middleware
+userSchema.post("findOneAndDelete", async function (doc, next) {
+  if (doc) {
+    console.log(doc);
+    await Note.deleteMany({ user: doc._id });
+  }
+
+  next();
+});
 const Users = mongoose.model<User, UserStaticMethods>("Users", userSchema);
 
 export default Users;
