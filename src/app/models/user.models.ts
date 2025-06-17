@@ -1,5 +1,11 @@
-import mongoose, { model } from "mongoose";
-import { IAddress, User } from "../interfaces/users.interface";
+import mongoose, { Model } from "mongoose";
+import bcrypt from "bcrypt";
+
+import {
+  IAddress,
+  User,
+  UserInstanceMethods,
+} from "../interfaces/users.interface";
 import validator from "validator";
 
 const userAddressSchema = new mongoose.Schema<IAddress>(
@@ -13,7 +19,7 @@ const userAddressSchema = new mongoose.Schema<IAddress>(
   }
 );
 
-const userSchema = new mongoose.Schema<User>(
+const userSchema = new mongoose.Schema<User, Model<User>, UserInstanceMethods>(
   {
     firstName: {
       type: String,
@@ -43,6 +49,15 @@ const userSchema = new mongoose.Schema<User>(
       // },
       validate: [validator.isEmail, "Invalid email sent {VALUE} "],
     },
+    password: {
+      type: String,
+      required: [true, "Password is required"],
+      minlength: [
+        6,
+        "Must be password length at least 6 character, got {VALUE}",
+      ],
+      select: false,
+    },
     phone: {
       type: String,
       required: true,
@@ -65,6 +80,11 @@ const userSchema = new mongoose.Schema<User>(
   }
 );
 
-const Users = model<User>("Users", userSchema);
+userSchema.method("hashPassword", async function (pass: string) {
+  const password = await bcrypt.hash(pass, 10);
+  return password;
+});
+
+const Users = mongoose.model<User>("Users", userSchema);
 
 export default Users;

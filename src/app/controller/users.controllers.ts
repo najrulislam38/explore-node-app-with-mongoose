@@ -18,7 +18,17 @@ usersRoutes.post("/create-user", async (req: Request, res: Response) => {
     // const zodBody = await createValidationWithZod.parseAsync(req.body);
     const body = req.body;
 
-    const newUser = await Users.create(body);
+    // const password = await bcrypt.hash(body.password, 10);
+    // console.log(password);
+
+    // body.password = password;
+
+    const newUser = new Users(body);
+    const password = await newUser.hashPassword(body.password);
+
+    newUser.password = password;
+
+    await newUser.save();
 
     if (!newUser) {
       throw new Error("User provided data not valid.");
