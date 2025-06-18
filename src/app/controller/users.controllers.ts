@@ -40,6 +40,7 @@ usersRoutes.post("/create-user", async (req: Request, res: Response) => {
     if (!newUser) {
       throw new Error("User provided data not valid.");
     }
+
     res.status(201).json({
       success: true,
       message: "User created successfully",

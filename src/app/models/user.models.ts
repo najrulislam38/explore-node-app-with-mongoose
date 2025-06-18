@@ -87,6 +87,8 @@ const userSchema = new mongoose.Schema<
   }
 );
 
+// hook / middleware method
+
 // instance methods
 userSchema.method("hashPassword", async function (pass: string) {
   const password = await bcrypt.hash(pass, 10);
